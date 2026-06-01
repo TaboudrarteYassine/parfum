@@ -21,6 +21,12 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order'));
     }
 
+    public function receipt(Order $order)
+    {
+        $order->load('items.product', 'items.pack');
+        return view('admin.orders.receipt', compact('order'));
+    }
+
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
@@ -49,10 +55,10 @@ class OrderController extends Controller
 
         // Create the retour record — accepted immediately since admin confirmed it physically
         Retour::create([
-            'user_id'      => $order->user_id,
-            'commande_id'  => $order->id,
-            'reason'       => $request->reason,
-            'status'       => 'accepted', // auto-accepted: livreur already brought it back
+            'user_id' => $order->user_id,
+            'commande_id' => $order->id,
+            'reason' => $request->reason,
+            'status' => 'accepted', // auto-accepted: livreur already brought it back
         ]);
 
         // Restore stock for every item in the order

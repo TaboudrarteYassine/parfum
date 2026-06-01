@@ -31,7 +31,12 @@
                     </form>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('admin.orders.receipt', $order) }}" target="_blank" class="text-gray-400 hover:text-white" title="Imprimer le reçu">
+                        <i class="fas fa-receipt"></i>
+                    </a>
                     <a href="{{ route('admin.orders.show', $order) }}" class="text-blue-500 hover:text-blue-400">Voir détails</a>
+                </div>
                 </td>
             </tr>
             @endforeach

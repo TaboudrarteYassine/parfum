@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\PackController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\RetourController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\FinanceController;
 
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -63,25 +64,28 @@ Route::middleware(['auth'])->group(function () {
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-    
+
     Route::resource('categories', CategoryController::class)->except('show');
     Route::resource('brands', BrandController::class)->except('show');
-    
+
     Route::resource('products', ProductController::class);
     Route::post('products/image/{image}/delete', [ProductController::class, 'deleteImage'])->name('products.image.delete');
     Route::post('products/image/{image}/main', [ProductController::class, 'setMainImage'])->name('products.image.main');
-    
+
     Route::resource('packs', PackController::class);
-    
+
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('orders/{order}/receipt', [OrderController::class, 'receipt'])->name('orders.receipt');
     Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
     Route::post('orders/{order}/manual-return', [OrderController::class, 'manualReturn'])->name('orders.manual-return');
-    
+
     Route::get('retours', [RetourController::class, 'index'])->name('retours.index');
     Route::get('retours/{retour}', [RetourController::class, 'show'])->name('retours.show');
     Route::post('retours/{retour}/status', [RetourController::class, 'updateStatus'])->name('retours.status');
-    
+
+    Route::get('finance', [FinanceController::class, 'index'])->name('finance.index');
+
     Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
     Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
 });

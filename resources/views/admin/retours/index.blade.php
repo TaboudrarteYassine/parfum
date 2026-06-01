@@ -15,7 +15,7 @@
             @foreach($retours as $retour)
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">#{{ $retour->order->id }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $retour->user->name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $retour->user->name ?? $retour->order->customer_name }}</td>
                 <td class="px-6 py-4 text-sm text-gray-300">{{ Str::limit($retour->reason, 50) }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                     <form action="{{ route('admin.retours.status', $retour) }}" method="POST">

@@ -14,15 +14,15 @@ class ProductController extends Controller
     {
         $query = Product::with(['category', 'brand', 'images']);
 
-        if ($request->has('category')) {
+        if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
-        if ($request->has('brand')) {
+        if ($request->filled('brand')) {
             $query->where('brand_id', $request->brand);
         }
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where('name', 'LIKE', '%' . $request->search . '%');
         }
 

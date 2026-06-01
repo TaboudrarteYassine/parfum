@@ -27,7 +27,15 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $product->name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $product->price }} MAD</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $product->stock }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    @if($product->stock <= 0)
+                        <span class="text-red-400 font-bold">Rupture</span>
+                    @elseif($product->stock <= 5)
+                        <span class="text-yellow-400 font-bold">{{ $product->stock }}</span>
+                    @else
+                        <span class="text-gray-300">{{ $product->stock }}</span>
+                    @endif
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <a href="{{ route('admin.products.edit', $product) }}" class="text-blue-500 hover:text-blue-400 mr-3">Modifier</a>
                     <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline" onsubmit="return confirm('Sûr ?');">

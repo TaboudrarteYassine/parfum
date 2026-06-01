@@ -36,8 +36,12 @@
     <nav class="bg-card border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-card/95">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <!-- Left: Logo + Nav links -->
-                <div class="flex items-center gap-8">
+                <!-- Left: Logo + Hamburger -->
+                <div class="flex items-center gap-4">
+                    <!-- Mobile hamburger -->
+                    <button id="menu-toggle" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                        <i id="menu-icon" class="fas fa-bars text-lg"></i>
+                    </button>
                     <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold text-xl tracking-widest uppercase text-white">
                         @if(setting()->logo)
                             <img src="{{ asset('storage/' . setting()->logo) }}" class="h-8">
@@ -46,19 +50,21 @@
                         @endif
                         {{ setting()->site_name ?? 'Parfum' }}
                     </a>
-                    <div class="hidden md:flex items-center gap-6">
-                        <a href="{{ route('home') }}" class="text-sm text-gray-400 hover:text-white transition-colors {{ request()->routeIs('home') ? 'text-white' : '' }}">Accueil</a>
-                        <a href="{{ route('products.index') }}" class="text-sm text-gray-400 hover:text-white transition-colors {{ request()->routeIs('products.*') ? 'text-white' : '' }}">Parfums</a>
-                        <a href="{{ route('track.order') }}" class="text-sm text-gray-400 hover:text-white transition-colors">Suivre</a>
-                    </div>
+                </div>
+
+                <!-- Desktop nav links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="{{ route('home') }}" class="text-sm text-gray-400 hover:text-white transition-colors {{ request()->routeIs('home') ? 'text-white' : '' }}">Accueil</a>
+                    <a href="{{ route('products.index') }}" class="text-sm text-gray-400 hover:text-white transition-colors {{ request()->routeIs('products.*') ? 'text-white' : '' }}">Parfums</a>
+                    <a href="{{ route('track.order') }}" class="text-sm text-gray-400 hover:text-white transition-colors">Suivre</a>
                 </div>
 
                 <!-- Right: Search + Cart + User -->
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 sm:gap-4">
                     <!-- Search -->
                     <div class="hidden sm:block relative">
                         <input type="text" id="search-input" placeholder="Rechercher..."
-                               class="bg-dark border border-border rounded-full px-4 py-1.5 pl-9 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500 w-48 transition-all"
+                               class="bg-dark border border-border rounded-full px-4 py-1.5 pl-9 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500 w-36 lg:w-48 transition-all"
                                autocomplete="off">
                         <i class="fas fa-search absolute left-3 top-2.5 text-gray-600 text-xs"></i>
                         <div id="search-results" class="absolute top-full mt-2 left-0 w-80 bg-card border border-border rounded-xl shadow-2xl hidden overflow-hidden z-50"></div>
@@ -76,7 +82,7 @@
 
                     <!-- User Menu -->
                     @auth
-                    <div class="relative" x-data="{ open: false }">
+                    <div class="relative">
                         <button onclick="this.nextElementSibling.classList.toggle('hidden')"
                                 class="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
                             <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white">
@@ -114,6 +120,33 @@
                     </a>
                     @endauth
                 </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-border bg-card">
+            <div class="px-4 py-3 space-y-2">
+                <a href="{{ route('home') }}" class="block px-4 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors {{ request()->routeIs('home') ? 'bg-white/5 text-white' : '' }}">
+                    <i class="fas fa-home w-5"></i> Accueil
+                </a>
+                <a href="{{ route('products.index') }}" class="block px-4 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors {{ request()->routeIs('products.*') ? 'bg-white/5 text-white' : '' }}">
+                    <i class="fas fa-spray-can w-5"></i> Parfums
+                </a>
+                <a href="{{ route('track.order') }}" class="block px-4 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
+                    <i class="fas fa-map-marker-alt w-5"></i> Suivre ma commande
+                </a>
+                <!-- Mobile search -->
+                <div class="relative sm:hidden">
+                    <input type="text" id="search-input-mobile" placeholder="Rechercher..."
+                           class="w-full bg-dark border border-border rounded-lg px-4 py-2.5 pl-9 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-gray-500"
+                           autocomplete="off">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-600 text-xs"></i>
+                </div>
+                @guest
+                <a href="{{ route('login') }}" class="block sm:hidden px-4 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
+                    <i class="fas fa-user w-5"></i> Connexion
+                </a>
+                @endguest
             </div>
         </div>
     </nav>
@@ -180,14 +213,45 @@
             });
         }
 
-        // Close search on outside click
-        document.addEventListener('click', function(e) {
-            if (searchInput && !searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                searchResults.classList.add('hidden');
-            }
+    // Close search on outside click
+    document.addEventListener('click', function(e) {
+        if (searchInput && !searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.classList.toggle('fa-bars');
+            menuIcon.classList.toggle('fa-times');
         });
-    </script>
-    @stack('scripts')
+    }
+
+    // Mobile search (reuse same logic as desktop)
+    const searchInputMobile = document.getElementById('search-input-mobile');
+    if (searchInputMobile) {
+        searchInputMobile.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const q = this.value.trim();
+            if (q.length < 2) { return; }
+            searchTimeout = setTimeout(() => {
+                axios.get('/search?q=' + encodeURIComponent(q))
+                    .then(res => {
+                        // For mobile, we just redirect to search results page
+                        if (res.data.length) {
+                            window.location.href = '/search?q=' + encodeURIComponent(q);
+                        }
+                    });
+            }, 400);
+        });
+    }
+</script>
+@stack('scripts')
 </body>
 </html>
 
